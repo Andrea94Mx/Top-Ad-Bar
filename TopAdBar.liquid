@@ -1,0 +1,200 @@
+<div class="mainBarDiv">
+    <div class="TopBarText">
+      <button class="backButton"><img src="https://cdn.shopify.com/s/files/1/0567/8737/0028/files/leftrrow.png?v=1713448911" height='25px' alt="Back Button"></button>   
+      {% for block in section.blocks %}
+      <div class="block" data-index="{{ forloop.index }}">
+        <a href="{{ block.settings.url }}">{{ block.settings.text }}</a>
+        {{ block.settings.rich_text_content | raw }}
+        
+  <div class="TxtButton">
+        <a href="{{ block.settings.url }}" {% if block.settings.url == blank %}style="pointer-events: none;"{% endif %}>
+          <p class="AdText">{{ block.settings.AdditionalInput }}</p>
+        </a>
+  </div>
+  
+      </div>
+      {% endfor %}
+      <button class="nextButton"> <img src="https://cdn.shopify.com/s/files/1/0567/8737/0028/files/rightrrow.png?v=1713448911" height='25px' alt="Next Button"></button>   
+    </div>
+  </div>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var currentIndex = 1;
+    var totalBlocks = document.querySelectorAll('.block').length;
+    var animationDuration = 1000; // Animation duration in milliseconds
+  
+    function showNextBlock() {
+      var currentBlock = document.querySelector('.block[data-index="' + currentIndex + '"]');
+      var nextIndex = currentIndex + 1;
+      var nextBlock = document.querySelector('.block[data-index="' + nextIndex + '"]');
+  
+      if (currentBlock) {
+        fadeOut(currentBlock, function() {
+          if (nextBlock) {
+            fadeIn(nextBlock);
+            currentIndex = nextIndex;
+          } else {
+            currentIndex = 1;
+            fadeIn(document.querySelector('.block[data-index="1"]'));
+          }
+        });
+      }
+    }
+  
+    function showPastBlock() {
+      var currentBlock = document.querySelector('.block[data-index="' + currentIndex + '"]');
+      var nextIndex = currentIndex - 1;
+      var nextBlock = document.querySelector('.block[data-index="' + nextIndex + '"]');
+      var lastBlock = document.querySelector('.block[data-index="' + totalBlocks + '"]');
+  
+      if (currentBlock) {
+        fadeOut(currentBlock, function() {
+          if (nextBlock) {
+            fadeIn(nextBlock);
+            currentIndex = nextIndex;
+          } else {
+            currentIndex = totalBlocks;
+            fadeIn(lastBlock);
+          }
+        });
+      }
+    }
+  
+    function fadeOut(element, callback) {
+      var opacity = 1;
+      var fadeOutInterval = setInterval(function() {
+        if (opacity > 0) {
+          opacity -= 0.05;
+          element.style.opacity = opacity;
+        } else {
+          clearInterval(fadeOutInterval);
+          element.style.display = 'none';
+          callback();
+        }
+      }, animationDuration / 20);
+    }
+  
+    function fadeIn(element) {
+      var opacity = 0;
+      element.style.opacity = opacity;
+      element.style.display = 'block';
+  
+      var fadeInInterval = setInterval(function() {
+        if (opacity < 1) {
+          opacity += 0.05;
+          element.style.opacity = opacity;
+        } else {
+          clearInterval(fadeInInterval);
+        }
+      }, animationDuration / 20);
+    }
+  
+    var nextButton = document.querySelector('.nextButton');
+    if (nextButton) {
+      nextButton.addEventListener('click', showNextBlock);
+    }
+  
+    var backButton = document.querySelector('.backButton');
+    if (backButton) {
+      backButton.addEventListener('click', showPastBlock);
+    }
+  });
+  </script>
+  
+  <style>
+  .AdText{
+    display:flex;
+  font-family:Assistant, sans-serif; 
+  font-weight:700; 
+  color:black; 
+  font-size:1.7rem;
+  margin-bottom: 0px;
+  align-items: center;
+  overflow: hidden;
+  }
+  
+  
+  /* .AdText:hover{
+    text-decoration: underline;
+  } */
+  
+  .TopBarText{
+  display:flex;
+   -webkit-justify-content:space-between;
+   -webkit-align-items: center;
+  margin-left: 5%;
+  margin-right: 5%;
+    height: 40px;
+  }
+  
+  .mainBarDiv{
+   background-image: linear-gradient(to right, #cc9f53, #f0d283 50%, #b78b1e);
+  }
+  
+  .backButton{
+  background:transparent;
+  border:none;
+  max-width: 50px;
+  }
+  .nextButton{
+  background:transparent;
+  border:none;
+  max-width: 50px;
+  }
+  
+  .block {
+    display: none;
+  }
+  
+  .block[data-index="1"] {
+    display: block;
+  }
+  
+  
+  @media(max-width: 690px){
+    .AdText{
+  font-size:1.3rem;
+  
+  
+    }
+  
+  
+  }
+  </style>
+  
+  {% schema %}
+  {
+    "name": "TopBarAd",
+    "settings": [
+  
+    ],
+    "presets": [
+      {
+        "name": "TopBarAd"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "additional_block",
+        "name": "ADD A NEW AD",
+        "settings": [
+          {
+            "type": "text",
+            "id": "AdditionalInput",
+            "label": "Additional Input",
+            "default": "Insert your text here",
+            "info": "Enter additional text here"
+          },
+      {
+            "type": "text",
+            "id": "url",
+            "label": "URL",
+            "info": "Enter the URL for the block"
+          }
+          
+        ]
+      }
+    ]
+  }
+  {% endschema %}
